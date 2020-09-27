@@ -20,12 +20,66 @@ window.addEventListener('load', () => {
   countFavorites = document.querySelector('#tabFavorites');
 
   totalPopulationList = document.querySelector('#totalPopulationList');
-  totalPopulationFavorites = document.querySelector('#totalPopulationFavorites');
+  totalPopulationFavorites = document.querySelector(
+    '#totalPopulationFavorites'
+  );
 
-  numberFormat = Intl.NumberFormat('en-US');
+  numberFormat = Intl.NumberFormat('en-IN');
   fetchCountries();
 });
 
-function fetchCountries() {
-  console.log('fetching..');
+async function fetchCountries() {
+  const res = await fetch('https://restcountries.eu/rest/v2/all');
+  const json = await res.json();
+  allCountries = json.map((country) => {
+    const { numericCode, name, population, flag } = country;
+    return {
+      id: numericCode,
+      name,
+      population,
+      flag,
+    };
+  });
+
+  render();
 }
+
+function render() {
+  renderCountrylist();
+  renderFavorites();
+  renderSummary();
+
+  handleCountryButtons();
+}
+
+function renderCountrylist() {
+  let countriesHTML = '<div>';
+
+  allCountries.forEach((country) => {
+    const { id, name, population, flag } = country;
+
+    const countryHTML = `
+      <div class='country'>
+        <div>
+          <a id="${id}" class="waves-effect waves-effect waves-light btn">+</a>
+        </div>
+        <div>
+          <img src="${flag}" alt="${name}">
+        </div>
+        <div>
+          <ul>
+            <li>${name}</li>
+            <li>${population}</li>
+          </ul>
+        </div>
+      </div>
+      `;
+    countriesHTML += countryHTML;
+  });
+
+  tabCountries.innerHTML = countriesHTML;
+}
+
+function renderFavorites() {}
+function renderSummary() {}
+function handleCountryButtons() {}
